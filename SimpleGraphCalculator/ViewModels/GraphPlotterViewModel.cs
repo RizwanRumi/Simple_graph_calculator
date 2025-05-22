@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace SimpleGraphCalculatorApp.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class GraphPlotterViewModel : ViewModelBase
     {
         public FunctionParameters Parameters { get; set; } = new();
         public PlotModel Graph { get; set; } = new PlotModel { Title = "Function Plot" };
@@ -39,7 +39,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
 
         public ICommand PlotCommand { get; }
 
-        public MainWindowViewModel()
+        public GraphPlotterViewModel()
         {
             FunctionTypes = new ObservableCollection<FunctionType>((FunctionType[])Enum.GetValues(typeof(FunctionType)));
 
