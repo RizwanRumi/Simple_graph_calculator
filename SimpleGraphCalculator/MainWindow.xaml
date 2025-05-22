@@ -3,10 +3,61 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:SimpleGraphCalculatorApp"
+        xmlns:viewmodels="clr-namespace:SimpleGraphCalculatorApp.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="Simple Graph Calculator and Plotter" Height="500" Width="850">
+   
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="Graph Settings" Grid.Column="0" Margin="10" VerticalAlignment="Center">
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Row 0: Identity -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Function Type" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Name="GraphSelectorComboBox" 
+                          Margin="5,0,0,0"                  
+                          Width="150" 
+                          ItemsSource="{Binding FunctionTypes}" 
+                          SelectedItem="{Binding SelectedFunctionType, Mode=TwoWay}" />
+
+                <StackPanel Grid.Row="1">
+                    <TextBlock Text="Amplitude" />
+                    <TextBox Text="{Binding Parameters.Amplitude}" />
+
+                    <TextBlock Text="Frequency" />
+                    <TextBox Text="{Binding Parameters.Frequency}" />
+
+                    <TextBlock Text="Phase" />
+                    <TextBox Text="{Binding Parameters.Phase}" />
+
+                    <TextBlock Text="Range Start" />
+                    <TextBox Text="{Binding Parameters.RangeStart}" />
+
+                    <TextBlock Text="Range End" />
+                    <TextBox Text="{Binding Parameters.RangeEnd}" />
+
+                    <Button Content="Plot" Command="{Binding PlotCommand}" Margin="0,10,0,0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+       
+
+        <oxy:PlotView Grid.Column="1" Model="{Binding Graph}" />
     </Grid>
 </Window>
