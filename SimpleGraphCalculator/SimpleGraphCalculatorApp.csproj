@@ -79,7 +79,7 @@
     <Compile Include="Models\SincFunctionFactory.cs" />
     <Compile Include="Models\SinFunction.cs" />
     <Compile Include="Models\SinFunctionFactory.cs" />
-    <Compile Include="Services\GraphPlotterServices.cs" />
+    <Compile Include="Services\GraphPlotterService.cs" />
     <Compile Include="ViewModels\GraphPlotterViewModel.cs" />
     <Compile Include="ViewModels\GraphPlotterViewModel2.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
