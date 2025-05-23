@@ -1,4 +1,4 @@
-﻿<Window x:Class="SimpleGraphCalculator.Views.GraphPlotterView"
+﻿<Window x:Class="SimpleGraphCalculatorApp.Views.GraphPlotterView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
                 xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:SimpleGraphCalculatorApp"
         xmlns:viewmodels="clr-namespace:SimpleGraphCalculatorApp.ViewModels"
-        d:DataContext="{d:DesignInstance Type=viewmodels:GraphPlotterViewModel}"
+        d:DataContext="{d:DesignInstance Type=viewmodels:GraphPlotterViewModel2}"
         mc:Ignorable="d"
         Title="Simple Graph Calculator and Plotter" Height="500" Width="850">
 

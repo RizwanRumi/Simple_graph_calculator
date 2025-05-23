@@ -71,7 +71,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\BaseFunction.cs" />
+    <Compile Include="Models\CosFunction.cs" />
+    <Compile Include="Models\CosFunctionFactory.cs" />
+    <Compile Include="Models\FunctionFactory.cs" />
+    <Compile Include="Models\SincFunction.cs" />
+    <Compile Include="Models\SincFunctionFactory.cs" />
+    <Compile Include="Models\SinFunction.cs" />
+    <Compile Include="Models\SinFunctionFactory.cs" />
+    <Compile Include="Services\GraphPlotterServices.cs" />
     <Compile Include="ViewModels\GraphPlotterViewModel.cs" />
+    <Compile Include="ViewModels\GraphPlotterViewModel2.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\GraphPlotterView.xaml.cs">
       <DependentUpon>GraphPlotterView.xaml</DependentUpon>

@@ -1,7 +1,7 @@
 ﻿using SimpleGraphCalculatorApp.ViewModels;
 using System.Windows;
 
-namespace SimpleGraphCalculator.Views
+namespace SimpleGraphCalculatorApp.Views
 {
     /// <summary>
     /// Interaction logic for GraphPlotterView.xaml
@@ -11,7 +11,8 @@ namespace SimpleGraphCalculator.Views
         public GraphPlotterView()
         {
             InitializeComponent();
-            DataContext = new GraphPlotterViewModel();
+            //DataContext = new GraphPlotterViewModel();
+            DataContext = new GraphPlotterViewModel2();
         }
     }
 }
