@@ -8,6 +8,8 @@ using System.Windows.Input;
 using SimpleGraphCalculatorApp.Services;
 using SimpleGraphCalculator.Models;
 using System.Windows;
+using SimpleGraphCalculator.Interfaces;
+using SimpleGraphCalculator.Services;
 
 namespace SimpleGraphCalculatorApp.ViewModels
 {
@@ -43,16 +45,19 @@ namespace SimpleGraphCalculatorApp.ViewModels
 
         public ObservableCollection<FunctionType> FunctionTypes { get; set; }
 
-
         public ICommand PlotCommand { get; }
 
         private GraphPlotterService GraphPlotterService { get; set; }
 
-        private FunctionFactory FunctionFactory { get; set; }    
+        private FunctionFactory FunctionFactory { get; set; }
+
+        public readonly IMessageService messageService;
 
         public GraphPlotterViewModel2()
-        {            
-            Parameters = new FunctionParameters();
+        {
+            messageService = new MessageService();
+
+            Parameters = SettingsService.Load(); // Load on startup
 
             FunctionTypes = new ObservableCollection<FunctionType>((FunctionType[])Enum.GetValues(typeof(FunctionType)));
 
@@ -79,15 +84,17 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 Graph = new PlotModel { Title = $"{SelectedFunctionType} Function" };
                 Graph.Series.Clear();
 
-                var series = new LineSeries() { Title = Parameters.Type.ToString() };
-
+                var series = new LineSeries();
 
                 // check start and end range and swap if needed
                 if (Parameters.RangeStart > Parameters.RangeEnd)
-                {
-                    (Parameters.RangeEnd, Parameters.RangeStart) = (Parameters.RangeStart, Parameters.RangeEnd);
+                {                    
+                    messageService.ShowMessage("Range start was greater than range end. Please swap the values!", "Warning");
+                    return; 
                 }
 
+                // Save Parameters to settings
+                SettingsService.Save(Parameters);
 
                 for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
                 {
@@ -99,7 +106,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while plotting the function: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                messageService.ShowMessage($"An error occurred while plotting the function: {ex.Message}", "Error");
             }
                 
         }
