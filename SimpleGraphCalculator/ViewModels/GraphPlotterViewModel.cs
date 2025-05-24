@@ -50,7 +50,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
         private void PlotFunction()
         {
             Graph.Series.Clear();
-            var series = new LineSeries { Title = Parameters.Type.ToString() };
+            var series = new LineSeries();
 
             for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
             {
