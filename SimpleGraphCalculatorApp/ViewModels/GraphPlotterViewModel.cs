@@ -1,19 +1,19 @@
 ﻿using OxyPlot.Series;
 using OxyPlot;
-using SimpleGraphCalculatorApp.Commands;
-using SimpleGraphCalculatorApp.Models;
+using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using SimpleGraphCalculatorApp.Services;
-using SimpleGraphCalculator.Models;
-using System.Windows;
-using SimpleGraphCalculator.Interfaces;
-using SimpleGraphCalculator.Services;
+using SimpleGraphCalculatorApp.Interfaces;
+using SimpleGraphCalculatorApp.Commands;
+using SimpleGraphCalculatorApp.Models;
+
 
 namespace SimpleGraphCalculatorApp.ViewModels
 {
-    public class GraphPlotterViewModel2 : ViewModelBase
+    public class GraphPlotterViewModel : ViewModelBase
     {
         private PlotModel _graph;
         public PlotModel Graph
@@ -25,10 +25,9 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 OnPropertyChanged(nameof(Graph)); 
             }
         }
-
         public FunctionParameters Parameters { get; set; }
-        
-        
+        public ObservableCollection<FunctionType> FunctionTypes { get; set; }
+
         private FunctionType _selectedFunctionType;
         public FunctionType SelectedFunctionType
         {
@@ -42,27 +41,25 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 }
             }
         }
-
-        public ObservableCollection<FunctionType> FunctionTypes { get; set; }
+        
+        private GraphPlotterService _graphPlotterService;        
+        private FunctionFactory _functionFactory;        
+        public readonly IMessageService _messageService;
 
         public ICommand PlotCommand { get; }
+        public ICommand ExportSvgCommand { get; }
 
-        private GraphPlotterService GraphPlotterService { get; set; }
-
-        private FunctionFactory FunctionFactory { get; set; }
-
-        public readonly IMessageService messageService;
-
-        public GraphPlotterViewModel2()
+        public GraphPlotterViewModel(FunctionFactory functionFactory, IMessageService messageService, FunctionParameters parameters)
         {
-            messageService = new MessageService();
-
-            Parameters = SettingsService.Load(); // Load on startup
-
+            _functionFactory = functionFactory;
+            _messageService = messageService;
+            
+            Parameters = parameters;
             FunctionTypes = new ObservableCollection<FunctionType>((FunctionType[])Enum.GetValues(typeof(FunctionType)));
 
             PlotCommand = new RelayCommand(execute => PlotFunction());
-            
+            ExportSvgCommand = new RelayCommand(execute => ExportSvg());
+
             PlotFunction(); // Plot on load
         }
 
@@ -70,7 +67,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
         {
             try
             {
-                FunctionFactory = SelectedFunctionType switch
+                _functionFactory = SelectedFunctionType switch
                 {
                     FunctionType.Sin => new SinFunctionFactory(),
                     FunctionType.Cos => new CosFunctionFactory(),
@@ -78,7 +75,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
                     _ => throw new NotSupportedException("Unknown function type.")
                 };
 
-                GraphPlotterService = new GraphPlotterService(FunctionFactory, Parameters.Amplitude, Parameters.Frequency, Parameters.Phase);
+                _graphPlotterService = new GraphPlotterService(_functionFactory, Parameters.Amplitude, Parameters.Frequency, Parameters.Phase);
 
 
                 Graph = new PlotModel { Title = $"{SelectedFunctionType} Function" };
@@ -89,7 +86,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 // check start and end range and swap if needed
                 if (Parameters.RangeStart > Parameters.RangeEnd)
                 {                    
-                    messageService.ShowMessage("Range start was greater than range end. Please swap the values!", "Warning");
+                    _messageService.ShowMessage("Range start was greater than range end. Please swap the values!", "Warning");
                     return; 
                 }
 
@@ -98,7 +95,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
 
                 for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
                 {
-                    series.Points.Add(new DataPoint(x, GraphPlotterService.CalculateFunctionValue(x)));
+                    series.Points.Add(new DataPoint(x, _graphPlotterService.CalculateFunctionValue(x)));
                 }
 
                 Graph.Series.Add(series);
@@ -106,9 +103,25 @@ namespace SimpleGraphCalculatorApp.ViewModels
             }
             catch (Exception ex)
             {
-                messageService.ShowMessage($"An error occurred while plotting the function: {ex.Message}", "Error");
+                _messageService.ShowMessage($"An error occurred while plotting the function: {ex.Message}", "Error");
             }
                 
+        }
+
+        private void ExportSvg()
+        {
+            var dlg = new SaveFileDialog
+            {
+                Filter = "SVG files (*.svg)|*.svg",
+                FileName = "GraphExport.svg"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                using var stream = File.Create(dlg.FileName);
+                var exporter = new SvgExporter { Width = 800, Height = 600 };
+                exporter.Export(Graph, stream);
+            }
         }
     }
 }

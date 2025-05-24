@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleGraphCalculator.Models
+namespace SimpleGraphCalculatorApp.Models
 {
     public class SincFunction : BaseFunction
     {

@@ -1,7 +1,7 @@
-﻿using SimpleGraphCalculator.Interfaces;
+﻿using SimpleGraphCalculatorApp.Interfaces;
 using System.Windows;
 
-namespace SimpleGraphCalculator.Services
+namespace SimpleGraphCalculatorApp.Services
 {
     public class MessageService : IMessageService
     {

@@ -1,11 +1,11 @@
 ﻿using SimpleGraphCalculatorApp.Models;
 using System.IO;
 using System.Text.Json;
-using SimpleGraphCalculator.Interfaces;
+using SimpleGraphCalculatorApp.Interfaces;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace SimpleGraphCalculator.Services
+namespace SimpleGraphCalculatorApp.Services
 {
     public static class SettingsService
     {

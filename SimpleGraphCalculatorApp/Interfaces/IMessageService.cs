@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleGraphCalculator.Interfaces
+namespace SimpleGraphCalculatorApp.Interfaces
 {
     public interface IMessageService
     {
