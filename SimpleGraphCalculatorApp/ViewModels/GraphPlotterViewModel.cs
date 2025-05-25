@@ -48,11 +48,10 @@ namespace SimpleGraphCalculatorApp.ViewModels
         public readonly IMessageService _messageService;
 
         public ICommand PlotCommand { get; }
-        public ICommand ExportSvgCommand { get; }
+        public ICommand ExportCommand { get; }
 
         public VectorExportFormat SelectedExportFormat { get; set; } = VectorExportFormat.SVG;
-
-        public ICommand ExportCommand { get; }
+        
 
         public GraphPlotterViewModel(FunctionFactory functionFactory, IMessageService messageService, FunctionParameters parameters)
         {
