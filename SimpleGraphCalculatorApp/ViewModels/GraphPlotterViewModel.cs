@@ -9,6 +9,7 @@ using SimpleGraphCalculatorApp.Interfaces;
 using SimpleGraphCalculatorApp.Commands;
 using SimpleGraphCalculatorApp.Models;
 using SimpleGraphCalculator.Interfaces;
+using System.IO;
 
 
 
@@ -64,7 +65,10 @@ namespace SimpleGraphCalculatorApp.ViewModels
             PlotCommand = new RelayCommand(execute => PlotFunction());           
             ExportCommand = new RelayCommand(execute => ExportGraph());
 
-            PlotFunction(); // Plot on load
+            if(File.Exists(SettingsService.filePath))
+            {
+                PlotFunction(); // Plot on load
+            }            
         }
 
         private void PlotFunction()

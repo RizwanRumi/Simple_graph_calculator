@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleGraphCalculatorApp", "SimpleGraphCalculatorApp.csproj", "{814CA8FB-A654-4AF7-864D-19D52326A35C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleGraphCalculatorApp.Test", "..\SimpleGraphCalculatorApp.Test\SimpleGraphCalculatorApp.Test.csproj", "{834ED09D-C1B2-4AC8-9A88-188D231A7A11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{814CA8FB-A654-4AF7-864D-19D52326A35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814CA8FB-A654-4AF7-864D-19D52326A35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814CA8FB-A654-4AF7-864D-19D52326A35C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{834ED09D-C1B2-4AC8-9A88-188D231A7A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{834ED09D-C1B2-4AC8-9A88-188D231A7A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{834ED09D-C1B2-4AC8-9A88-188D231A7A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{834ED09D-C1B2-4AC8-9A88-188D231A7A11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

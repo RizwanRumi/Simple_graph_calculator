@@ -4,20 +4,21 @@ using System.Text.Json;
 using SimpleGraphCalculatorApp.Interfaces;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System;
 
 namespace SimpleGraphCalculatorApp.Services
 {
     public static class SettingsService
     {
         private static readonly string fileDirectory;
-        private static readonly string filePath;
+        public static readonly string filePath;
         private static readonly IMessageService messageService;
         private static List<FunctionParameters> parametersList;
 
         static SettingsService()
         {
             // Initialize static fields
-            fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+            fileDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
             filePath = Path.Combine(fileDirectory,"param_settings.json");
             messageService = new MessageService();
             parametersList = new List<FunctionParameters>();
@@ -72,7 +73,13 @@ namespace SimpleGraphCalculatorApp.Services
                 }
                 else
                 {
-                    File.Create(filePath).Close();
+                    if (!Directory.Exists(fileDirectory))
+                    {
+                        Directory.CreateDirectory(fileDirectory);
+                    }
+
+                    File.Create(filePath).Close(); // Create file if it does not exist
+
                     parametersList = new List<FunctionParameters>();
                 }
 
