@@ -3,14 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:SimpleGraphCalculatorApp"
         xmlns:models="clr-namespace:SimpleGraphCalculatorApp.Models"
         xmlns:viewmodels="clr-namespace:SimpleGraphCalculatorApp.ViewModels"
+        xmlns:converters="clr-namespace:SimpleGraphCalculatorApp.Converters"
         d:DataContext="{d:DesignInstance Type=viewmodels:GraphPlotterViewModel}"
         mc:Ignorable="d"
         Title="Simple Graph Calculator and Plotter" Height="500" Width="850">
 
+    <Window.Resources>
+        
+        <converters:StringToDoubleConverter x:Key="StringToDoubleConverter"/>
+
+        <!-- Style for TextBox display -->
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Height" Value="25"/>            
+        </Style>
+    </Window.Resources>
+    
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -42,24 +55,45 @@
 
                 <!-- Row 1: Function Parameters -->
                 <StackPanel Grid.Row="1">
-                    <TextBlock Text="Amplitude" />
-                    <TextBox Text="{Binding Parameters.Amplitude}" />
+                    <TextBlock Text="Amplitude" />                   
+                    <TextBox Text="{Binding Parameters.Amplitude, 
+                             Converter={StaticResource StringToDoubleConverter}, 
+                             UpdateSourceTrigger=LostFocus}"
+                             PreviewTextInput="DoubleOnly_PreviewTextInput"
+                             LostFocus="TextBox_LostFocus"/>
+
 
                     <TextBlock Text="Frequency" />
-                    <TextBox Text="{Binding Parameters.Frequency}" />
+                    <TextBox Text="{Binding Parameters.Frequency, 
+                             Converter={StaticResource StringToDoubleConverter}, 
+                             UpdateSourceTrigger=LostFocus}"
+                             PreviewTextInput="DoubleOnly_PreviewTextInput"
+                             LostFocus="TextBox_LostFocus"/>
 
                     <TextBlock Text="Phase" />
-                    <TextBox Text="{Binding Parameters.Phase}" />
+                    <TextBox Text="{Binding Parameters.Phase, 
+                             Converter={StaticResource StringToDoubleConverter}, 
+                             UpdateSourceTrigger=LostFocus}"
+                             PreviewTextInput="DoubleOnly_PreviewTextInput"
+                             LostFocus="TextBox_LostFocus"/>
 
                     <TextBlock Text="Range Start" />
-                    <TextBox Text="{Binding Parameters.RangeStart}" />
+                    <TextBox Text="{Binding Parameters.RangeStart, 
+                             Converter={StaticResource StringToDoubleConverter}, 
+                             UpdateSourceTrigger=LostFocus}"
+                             PreviewTextInput="DoubleOnly_PreviewTextInput"
+                             LostFocus="TextBox_LostFocus"/>
 
                     <TextBlock Text="Range End" />
-                    <TextBox Text="{Binding Parameters.RangeEnd}" />
+                    <TextBox Text="{Binding Parameters.RangeEnd, 
+                             Converter={StaticResource StringToDoubleConverter}, 
+                             UpdateSourceTrigger=LostFocus}"
+                             PreviewTextInput="DoubleOnly_PreviewTextInput"
+                             LostFocus="TextBox_LostFocus"/>
                 </StackPanel>
 
                 <!-- Row 2: Plot and Export Controls -->
-                <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
+                <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button Content="Plot Graph" Command="{Binding PlotCommand}" Margin="5" />
                     
                     <TextBlock Text="Vector Type" Margin="5" />
