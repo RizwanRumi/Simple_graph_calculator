@@ -14,6 +14,14 @@ namespace SimpleGraphCalculatorApp.Models
         public double Frequency { get; set; }
         public double Phase { get; set; }
 
+        // Parameterless constructor for Moq
+        protected BaseFunction()
+        {           
+            Amplitude = 1.0;
+            Frequency = 1.0;
+            Phase = 0.0;
+        }
+
         protected BaseFunction(double amplitude, double frequency, double phase)
         {
             Amplitude = amplitude;
