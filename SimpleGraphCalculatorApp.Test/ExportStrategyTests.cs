@@ -27,12 +27,15 @@ namespace SimpleGraphCalculatorApp.Test
         [Test]
         public void SvgExportStrategy_ShouldCreateFile()
         {
+            // Arrange
             var model = CreateSampleModel();
             var strategy = new SvgExportStrategy();
             var path = "test_output.svg";
 
+            // Act
             strategy.Export(model, path);
 
+            // Assert
             Assert.That(File.Exists(path));
             File.Delete(path);
         }
@@ -48,6 +51,30 @@ namespace SimpleGraphCalculatorApp.Test
 
             Assert.That(File.Exists(path));
             File.Delete(path);
+        }
+
+        [Test]
+        public void SvgExportStrategy_ShouldThrowException_OnNullModel()
+        {
+            // Arrange
+            var strategy = new SvgExportStrategy();
+            string path = "test.svg";
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => strategy.Export(null, path));
+        }
+
+        [Test]
+        public void SvgExportStrategy_ShouldThrowException_OnInvalidPath()
+        {
+            // Arrange
+            var model = new PlotModel();
+            var strategy = new SvgExportStrategy();
+
+            string path = @"Z:\Test\NotExist\output.svg";
+
+            // Act & Assert
+            Assert.Throws<DirectoryNotFoundException>(() => strategy.Export(model, path));
         }
     }
 }
