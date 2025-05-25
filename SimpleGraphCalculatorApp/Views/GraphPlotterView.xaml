@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:SimpleGraphCalculatorApp"
+        xmlns:models="clr-namespace:SimpleGraphCalculatorApp.Models"
         xmlns:viewmodels="clr-namespace:SimpleGraphCalculatorApp.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewmodels:GraphPlotterViewModel}"
         mc:Ignorable="d"
@@ -29,17 +30,17 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- Row 0: Identity -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <!-- Row 0: Function Identity -->
+                <WrapPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Grid.Column="0" Text="Function Type" Margin="5" />
                     <ComboBox Grid.Column="1" Name="GraphSelectorComboBox" 
                               Margin="5"                  
                               Width="150" 
                               ItemsSource="{Binding FunctionTypes}" 
                               SelectedItem="{Binding SelectedFunctionType, Mode=TwoWay}" />
-                </StackPanel>
-                
+                </WrapPanel>
 
+                <!-- Row 1: Function Parameters -->
                 <StackPanel Grid.Row="1">
                     <TextBlock Text="Amplitude" />
                     <TextBox Text="{Binding Parameters.Amplitude}" />
@@ -57,10 +58,18 @@
                     <TextBox Text="{Binding Parameters.RangeEnd}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Plot Graph" Command="{Binding PlotCommand}" Margin="10" />
-                    <Button Content="Export Vector Format" Command="{Binding ExportSvgCommand}" Margin="10"/>
-                </StackPanel>
+                <!-- Row 2: Plot and Export Controls -->
+                <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
+                    <Button Content="Plot Graph" Command="{Binding PlotCommand}" Margin="5" />
+                    
+                    <TextBlock Text="Vector Type" Margin="5" />
+                    <ComboBox ItemsSource="{Binding Source={x:Static models:VectorExportFormatValues.Values}}"
+                              SelectedItem="{Binding SelectedExportFormat}"
+                              Margin="5"
+                              Width="60"/>
+                    
+                    <Button Content="Export" Command="{Binding ExportCommand}" Margin="5" />
+                </WrapPanel>
 
             </Grid>
         </GroupBox>

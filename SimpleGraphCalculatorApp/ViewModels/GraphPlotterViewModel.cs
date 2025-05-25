@@ -2,13 +2,14 @@
 using OxyPlot;
 using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using SimpleGraphCalculatorApp.Services;
 using SimpleGraphCalculatorApp.Interfaces;
 using SimpleGraphCalculatorApp.Commands;
 using SimpleGraphCalculatorApp.Models;
+using SimpleGraphCalculator.Interfaces;
+
 
 
 namespace SimpleGraphCalculatorApp.ViewModels
@@ -49,6 +50,10 @@ namespace SimpleGraphCalculatorApp.ViewModels
         public ICommand PlotCommand { get; }
         public ICommand ExportSvgCommand { get; }
 
+        public VectorExportFormat SelectedExportFormat { get; set; } = VectorExportFormat.SVG;
+
+        public ICommand ExportCommand { get; }
+
         public GraphPlotterViewModel(FunctionFactory functionFactory, IMessageService messageService, FunctionParameters parameters)
         {
             _functionFactory = functionFactory;
@@ -57,8 +62,8 @@ namespace SimpleGraphCalculatorApp.ViewModels
             Parameters = parameters;
             FunctionTypes = new ObservableCollection<FunctionType>((FunctionType[])Enum.GetValues(typeof(FunctionType)));
 
-            PlotCommand = new RelayCommand(execute => PlotFunction());
-            ExportSvgCommand = new RelayCommand(execute => ExportSvg());
+            PlotCommand = new RelayCommand(execute => PlotFunction());           
+            ExportCommand = new RelayCommand(execute => ExportGraph());
 
             PlotFunction(); // Plot on load
         }
@@ -108,19 +113,35 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 
         }
 
-        private void ExportSvg()
+        private void ExportGraph()
         {
-            var dlg = new SaveFileDialog
+            var dlg = new SaveFileDialog();
+
+            IExportStrategy strategy;
+
+            switch (SelectedExportFormat)
             {
-                Filter = "SVG files (*.svg)|*.svg",
-                FileName = "GraphExport.svg"
-            };
+                case VectorExportFormat.SVG:
+                    dlg.Filter = "SVG files (*.svg)|*.svg";
+                    dlg.FileName = "GraphExport.svg";
+                    strategy = new SvgExportStrategy();
+                    break;
+
+                case VectorExportFormat.XAML:
+                    dlg.Filter = "XAML files (*.xaml)|*.xaml";
+                    dlg.FileName = "GraphExport.xaml";
+                    strategy = new XamlExportStrategy();
+                    break;
+
+                default:
+                    _messageService.ShowMessage("Unsupported export format.");
+                    return;
+            }
 
             if (dlg.ShowDialog() == true)
             {
-                using var stream = File.Create(dlg.FileName);
-                var exporter = new SvgExporter { Width = 800, Height = 600 };
-                exporter.Export(Graph, stream);
+                var exporter = new GraphExporterService(strategy);
+                exporter.Export(Graph, dlg.FileName);
             }
         }
     }
