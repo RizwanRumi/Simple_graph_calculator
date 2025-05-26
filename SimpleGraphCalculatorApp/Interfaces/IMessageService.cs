@@ -8,6 +8,7 @@ namespace SimpleGraphCalculatorApp.Interfaces
 {
     public interface IMessageService
     {
+        string LastMessage { get; }
         void ShowMessage(string message);
         void ShowMessage(string message, string messgeType);
         bool ShowConfirmation(string message, string confirmation, string option);        
