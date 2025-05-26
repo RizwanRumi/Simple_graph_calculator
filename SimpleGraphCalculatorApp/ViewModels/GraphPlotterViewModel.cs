@@ -65,7 +65,7 @@ namespace SimpleGraphCalculatorApp.ViewModels
             PlotCommand = new RelayCommand(execute => PlotFunction());           
             ExportCommand = new RelayCommand(execute => ExportGraph());
 
-            if(File.Exists(SettingsService.filePath))
+            if(File.Exists(SettingsService.FilePath))
             {
                 PlotFunction(); // Plot on load
             }            

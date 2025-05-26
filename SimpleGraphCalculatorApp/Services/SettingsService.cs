@@ -1,52 +1,63 @@
 ﻿using SimpleGraphCalculatorApp.Models;
 using System.IO;
-using System.Text.Json;
 using SimpleGraphCalculatorApp.Interfaces;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using System;
+using Newtonsoft.Json;
 
 namespace SimpleGraphCalculatorApp.Services
 {
     public static class SettingsService
     {
-        private static readonly string fileDirectory;
-        public static readonly string filePath;
+        // Public properties to allow setting from tests or other parts of the application
+        public static string FileDirectory { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
+        public static string FilePath { get; set; } = Path.Combine(FileDirectory, "param_settings.json");
+
         private static readonly IMessageService messageService;
         private static List<FunctionParameters> parametersList;
 
         static SettingsService()
         {
             // Initialize static fields
-            fileDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-            filePath = Path.Combine(fileDirectory,"param_settings.json");
             messageService = new MessageService();
             parametersList = new List<FunctionParameters>();
         }
 
         public static List<FunctionParameters> GetParameterList()
         {  
-            if (File.Exists(filePath))
+            if (File.Exists(FilePath))
             {
                 try
                 {
-                    var options = new JsonSerializerOptions
+                    // Check if file is empty first
+                    var fileInfo = new FileInfo(FilePath);
+                    if (fileInfo.Length == 0)
                     {
-                        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString
-                    };
-
-                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        parametersList = JsonSerializer.Deserialize<List<FunctionParameters>>(fs, options);
+                        return new List<FunctionParameters>();
                     }
+
+                    // File.ReadAllText handles file sharing internally
+                    string jsonContent = File.ReadAllText(FilePath);
+
+                    if (string.IsNullOrWhiteSpace(jsonContent))
+                    {
+                        return new List<FunctionParameters>();
+                    }
+
+                    parametersList = JsonConvert.DeserializeObject<List<FunctionParameters>>(jsonContent);
                 }
                 catch (JsonException ex)
                 {
                     messageService.ShowMessage($"Error during loading parameter list data from Json file -> {ex.Message}", "Error");
                 }
+                catch (IOException ex)
+                {
+                    messageService.ShowMessage($"Error accessing file -> {ex.Message}", "Error");
+                    return new List<FunctionParameters>();
+                }
             }
 
-            return parametersList;
+            return parametersList ?? new List<FunctionParameters>();
         }
 
 
@@ -67,18 +78,16 @@ namespace SimpleGraphCalculatorApp.Services
         {
             try
             {
-                if (File.Exists(filePath))
+                if (File.Exists(FilePath))
                 {
                     parametersList = GetParameterList();
                 }
                 else
                 {
-                    if (!Directory.Exists(fileDirectory))
+                    if (!Directory.Exists(FileDirectory))
                     {
-                        Directory.CreateDirectory(fileDirectory);
+                        Directory.CreateDirectory(FileDirectory);
                     }
-
-                    File.Create(filePath).Close(); // Create file if it does not exist
 
                     parametersList = new List<FunctionParameters>();
                 }
@@ -90,17 +99,9 @@ namespace SimpleGraphCalculatorApp.Services
                 }
                                 
                 parametersList.Add(parameters);
-
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-
-                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    JsonSerializer.Serialize(fs, parametersList, options);
-                    fs.Flush();
-                }
+                
+                string jsonContent = JsonConvert.SerializeObject(parametersList, Formatting.Indented);
+                File.WriteAllText(FilePath, jsonContent);
             }
             catch (JsonException ex)
             {
@@ -114,24 +115,31 @@ namespace SimpleGraphCalculatorApp.Services
 
             try
             {
-                if (!File.Exists(filePath))
+                if (!File.Exists(FilePath))
                 {
-                    if (!Directory.Exists(fileDirectory))
+                    if (!Directory.Exists(FileDirectory))
                     {
-                        Directory.CreateDirectory(fileDirectory);
+                        Directory.CreateDirectory(FileDirectory);
                     }
                     return new FunctionParameters(); // return default  
                 }
-                
-                var options = new JsonSerializerOptions
-                {
-                    NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString
-                };
 
-                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                var fileInfo = new FileInfo(FilePath);
+                if (fileInfo.Length == 0)
                 {
-                    parametersList = JsonSerializer.Deserialize<Stack<FunctionParameters>>(fs, options);                    
-                }              
+                    return new FunctionParameters();
+                    
+                }
+
+                string jsonContent = File.ReadAllText(FilePath);
+
+                if (string.IsNullOrWhiteSpace(jsonContent))
+                {
+                    return new FunctionParameters();
+                }
+
+                parametersList = JsonConvert.DeserializeObject<Stack<FunctionParameters>>(jsonContent);
+
             }
             catch (JsonException ex)
             {
