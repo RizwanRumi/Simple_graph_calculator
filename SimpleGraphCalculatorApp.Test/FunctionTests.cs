@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
 using SimpleGraphCalculatorApp.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleGraphCalculatorApp.Test
 {
@@ -67,6 +63,23 @@ namespace SimpleGraphCalculatorApp.Test
 
             // Assert
             Assert.That(result, Is.EqualTo(expected).Within(1e-10));
+        }
+
+        [Test]
+        [TestCase(1.0, 1.0, 0.0, 0.0, 0.5)]
+        [TestCase(1.0, 1.0, 0.0, Math.PI / 2, 1.59)]
+        [TestCase(1.0, 1.0, 0.0, 3 * Math.PI / 2, -1.8)]
+        [TestCase(1.0, 1.0, 0.0, 2 * Math.PI, 0.99)]
+        public void SinFunction_Calculate_ReturnsWrongValues(double amplitude, double frequency, double phase, double input, double expected)
+        {
+            // Arrange
+            _sinFunction = new SinFunction(amplitude, frequency, phase);
+
+            // Act
+            double result = _sinFunction.Calculate(input);
+
+            // Assert
+            Assert.That(result, Is.Not.EqualTo(expected).Within(1e-10), "SinFunction results does not match with expected values.");
         }
     }
 }
