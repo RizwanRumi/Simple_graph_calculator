@@ -13,8 +13,14 @@ namespace SimpleGraphCalculatorApp.Services
         public static string FileDirectory { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
         public static string FilePath { get; set; } = Path.Combine(FileDirectory, "param_settings.json");
 
-        private static readonly IMessageService messageService;
+        public static IMessageService messageService;
         private static List<FunctionParameters> parametersList;
+
+        // Add a method to inject IMessageService for Mock test
+        public static void SetMessageService(IMessageService service)
+        {
+            messageService = service;
+        }
 
         static SettingsService()
         {
@@ -24,42 +30,37 @@ namespace SimpleGraphCalculatorApp.Services
         }
 
         public static List<FunctionParameters> GetParameterList()
-        {  
-            if (File.Exists(FilePath))
-            {
-                try
+        {           
+            try
+            { 
+                // Check if file is empty first
+                var fileInfo = new FileInfo(FilePath);
+                if (fileInfo.Length == 0)
                 {
-                    // Check if file is empty first
-                    var fileInfo = new FileInfo(FilePath);
-                    if (fileInfo.Length == 0)
-                    {
-                        return new List<FunctionParameters>();
-                    }
-
-                    // File.ReadAllText handles file sharing internally
-                    string jsonContent = File.ReadAllText(FilePath);
-
-                    if (string.IsNullOrWhiteSpace(jsonContent))
-                    {
-                        return new List<FunctionParameters>();
-                    }
-
-                    parametersList = JsonConvert.DeserializeObject<List<FunctionParameters>>(jsonContent);
-                }
-                catch (JsonException ex)
-                {
-                    messageService.ShowMessage($"Error during loading parameter list data from Json file -> {ex.Message}", "Error");
-                }
-                catch (IOException ex)
-                {
-                    messageService.ShowMessage($"Error accessing file -> {ex.Message}", "Error");
                     return new List<FunctionParameters>();
                 }
+
+                // File.ReadAllText handles file sharing internally
+                string jsonContent = File.ReadAllText(FilePath);
+
+                if (string.IsNullOrWhiteSpace(jsonContent))
+                {
+                    return new List<FunctionParameters>();
+                }
+
+                parametersList = JsonConvert.DeserializeObject<List<FunctionParameters>>(jsonContent);                
             }
+            catch (JsonException ex)
+            {
+                messageService.ShowMessage($"Error during loading parameter list data from Json file -> {ex.Message}", "Error");
+            }
+            catch (IOException)
+            {
+                messageService.ShowMessage("Error accessing file: The system cannot find the file specified.", "Error");                
+            }           
 
-            return parametersList ?? new List<FunctionParameters>();
+            return parametersList;
         }
-
 
         public static bool ParameterExists(FunctionParameters parameters)
         {            
@@ -115,15 +116,6 @@ namespace SimpleGraphCalculatorApp.Services
 
             try
             {
-                if (!File.Exists(FilePath))
-                {
-                    if (!Directory.Exists(FileDirectory))
-                    {
-                        Directory.CreateDirectory(FileDirectory);
-                    }
-                    return new FunctionParameters(); // return default  
-                }
-
                 var fileInfo = new FileInfo(FilePath);
                 if (fileInfo.Length == 0)
                 {
@@ -145,8 +137,12 @@ namespace SimpleGraphCalculatorApp.Services
             {
                 messageService.ShowMessage($"Error during loading parameters data from Json file -> {ex.Message}", "Error");                
             }
-            
-            
+            catch (IOException)
+            {
+                messageService.ShowMessage("Error accessing file: The system cannot find the file specified.", "Error");
+            }
+
+
             if (parametersList.Count == 0)
             {
                 return new FunctionParameters(); // return default if no parameters found in json file
