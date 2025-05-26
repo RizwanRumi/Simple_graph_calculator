@@ -127,13 +127,13 @@ namespace SimpleGraphCalculatorApp.ViewModels
                 case VectorExportFormat.SVG:
                     dlg.Filter = "SVG files (*.svg)|*.svg";
                     dlg.FileName = "GraphExport.svg";
-                    strategy = new SvgExportStrategy();
+                    strategy = new SvgExportStrategy(_messageService);
                     break;
 
                 case VectorExportFormat.XAML:
                     dlg.Filter = "XAML files (*.xaml)|*.xaml";
                     dlg.FileName = "GraphExport.xaml";
-                    strategy = new XamlExportStrategy();
+                    strategy = new XamlExportStrategy(_messageService);
                     break;
 
                 default:
