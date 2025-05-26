@@ -1,24 +1,28 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
+using SimpleGraphCalculatorApp.Interfaces;
 using SimpleGraphCalculatorApp.Models;
 using SimpleGraphCalculatorApp.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleGraphCalculatorApp.Test
 {
     [TestFixture]
     public class SettingsServiceTest
     {
+        private Mock<IMessageService> mockMessageService;
         private string originalDirectory;
         private string originalFilePath;
 
         [SetUp]
         public void Setup()
         {
+            mockMessageService = new Mock<IMessageService>();
+
+            // Inject the mock into SettingsService
+            SettingsService.SetMessageService(mockMessageService.Object);
+
             // Save the original paths so we can restore them later
             originalDirectory = SettingsService.FileDirectory;
             originalFilePath = SettingsService.FilePath;
@@ -93,6 +97,81 @@ namespace SimpleGraphCalculatorApp.Test
             Assert.That(result.Frequency, Is.EqualTo(1.0)); // default
             Assert.That(result.RangeStart, Is.EqualTo(-10.0)); // default
             Assert.That(result.RangeEnd, Is.EqualTo(10.0)); // default
+        }
+
+        [Test]
+        public void GetParameterList_ShouldReturnEmptyListWhenFileIsEmpty()
+        {
+            // Arrange
+            if (!File.Exists(SettingsService.FilePath))
+            {
+                File.WriteAllText(SettingsService.FilePath, "[]");  // Write empty JSON array
+            }
+
+            // Act
+            var parameters = SettingsService.GetParameterList();
+
+            // Assert
+            Assert.IsNotNull(parameters);
+            Assert.AreEqual(1, parameters.Count, "The parameters list should have 0 items, but the test asserts 1 item.");            
+        }
+
+        [Test]
+        public void GetParameterList_ShouldFailIfFileDoesNotExist()
+        {
+            // Arrange
+            if (File.Exists(SettingsService.FilePath))
+            {
+                File.Delete(SettingsService.FilePath);
+            }
+
+            // Act
+            var parameters = SettingsService.GetParameterList();
+
+            // Assert
+            Assert.IsNull(parameters, "The parameters list should be null, but the test asserts an empty list.");
+        }
+
+        [Test]
+        public void GetParameterList_ShouldShowErrorMessageWhenFileIsNotAccessible()
+        {
+            // Arrange   
+            if (File.Exists(SettingsService.FilePath))
+            {
+                File.Delete(SettingsService.FilePath);
+            }
+
+            string capturedMessage = null;
+            mockMessageService.Setup(m => m.ShowMessage(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((msg, title) => capturedMessage = msg);
+
+            // Act  
+            var parameters = SettingsService.GetParameterList();
+
+            // Assert  
+            mockMessageService.Verify(m => m.ShowMessage(It.Is<string>(msg => msg.Contains("Error accessing file")), "Error"), Times.Once);
+            Assert.AreEqual("Error accessing file: The system cannot find the file specified.", capturedMessage);
+        }
+
+        [Test]
+        public void GetParameterFromLoad_ShouldShowErrorMessageWhenFileIsNotAccessible()
+        {
+            // Arrange   
+            if (File.Exists(SettingsService.FilePath))
+            {
+                File.Delete(SettingsService.FilePath);
+            }
+
+            string capturedMessage = null;
+            mockMessageService.Setup(m => m.ShowMessage(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((msg, title) => capturedMessage = msg);
+
+            // Act  
+            var parameters = SettingsService.Load();
+
+            // Assert  
+            mockMessageService.Verify(m => m.ShowMessage(It.Is<string>(msg => msg.Contains("Error accessing file")), "Error"), Times.Once);
+            Assert.AreEqual("Error accessing file: The system cannot find the file specified.", capturedMessage);
         }
     }
 }
