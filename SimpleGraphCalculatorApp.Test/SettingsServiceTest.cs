@@ -23,7 +23,7 @@ namespace SimpleGraphCalculatorApp.Test
             // Inject the mock into SettingsService
             SettingsService.SetMessageService(mockMessageService.Object);
 
-            // Save the original paths so we can restore them later
+            // SaveParameters the original paths so we can restore them later
             originalDirectory = SettingsService.FileDirectory;
             originalFilePath = SettingsService.FilePath;
 
@@ -69,8 +69,8 @@ namespace SimpleGraphCalculatorApp.Test
 
            
             // Act  
-            SettingsService.Save(input);
-            var output = SettingsService.Load();
+            SettingsService.SaveParameters(input);
+            var output = SettingsService.LoadParameters();
 
             // Assert  
             Assert.Multiple(() =>
@@ -88,7 +88,7 @@ namespace SimpleGraphCalculatorApp.Test
         public void Load_ShouldReturnDefault_WhenFileDoesNotExist()
         {            
             // Act
-            var result = SettingsService.Load();
+            var result = SettingsService.LoadParameters();
 
             // Assert
             Assert.That(result, Is.TypeOf<FunctionParameters>());
@@ -167,7 +167,7 @@ namespace SimpleGraphCalculatorApp.Test
                 .Callback<string, string>((msg, title) => capturedMessage = msg);
 
             // Act  
-            var parameters = SettingsService.Load();
+            var parameters = SettingsService.LoadParameters();
 
             // Assert  
             mockMessageService.Verify(m => m.ShowMessage(It.Is<string>(msg => msg.Contains("Error accessing file")), "Error"), Times.Once);

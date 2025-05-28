@@ -20,7 +20,7 @@ namespace SimpleGraphCalculatorApp.Views
 
             IMessageService messageService = new MessageService();
             FunctionFactory functionFactory = new SinFunctionFactory();
-            FunctionParameters parameters = SettingsService.Load(); // Load on startup;
+            FunctionParameters parameters = SettingsService.LoadParameters(); // LoadParameters on startup;
 
             DataContext = new GraphPlotterViewModel(functionFactory, messageService, parameters);
         }

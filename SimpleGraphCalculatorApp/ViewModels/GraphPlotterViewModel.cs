@@ -98,8 +98,8 @@ namespace SimpleGraphCalculatorApp.ViewModels
                     return; 
                 }
 
-                // Save Parameters to settings
-                SettingsService.Save(Parameters);
+                // SaveParameters Parameters to settings
+                SettingsService.SaveParameters(Parameters);
 
                 for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
                 {

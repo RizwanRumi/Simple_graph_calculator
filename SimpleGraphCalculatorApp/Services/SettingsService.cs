@@ -75,7 +75,7 @@ namespace SimpleGraphCalculatorApp.Services
             return index;
         }
 
-        public static void Save(FunctionParameters parameters)
+        public static void SaveParameters(FunctionParameters parameters)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace SimpleGraphCalculatorApp.Services
             }           
         }
 
-        public static FunctionParameters Load()
+        public static FunctionParameters LoadParameters()
         {
             var parametersList = new Stack<FunctionParameters>();
 
