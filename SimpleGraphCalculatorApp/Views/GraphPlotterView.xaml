@@ -10,7 +10,7 @@
         xmlns:converters="clr-namespace:SimpleGraphCalculatorApp.Converters"
         d:DataContext="{d:DesignInstance Type=viewmodels:GraphPlotterViewModel}"
         mc:Ignorable="d"
-        Title="Simple Graph Calculator and Plotter" Height="500" Width="850">
+        Title="Simple Graph Calculator and Plotter" WindowStartupLocation="CenterScreen" Height="500" Width="850">
 
     <Window.Resources>
         

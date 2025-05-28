@@ -91,29 +91,48 @@ namespace SimpleGraphCalculatorApp.ViewModels
 
                 var series = new LineSeries();
 
-                // check start and end range and swap if needed
-                if (Parameters.RangeStart > Parameters.RangeEnd)
-                {                    
-                    _messageService.ShowMessage("Range start was greater than range end. Please swap the values!", "Warning");
-                    return; 
+                // check start and end range                
+                if (CheckValidRanges(Parameters.RangeStart, Parameters.RangeEnd))
+                {                   
+                    // SaveParameters Parameters to settings
+                    SettingsService.SaveParameters(Parameters);
+
+                    for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
+                    {
+                        series.Points.Add(new DataPoint(x, _graphPlotterService.CalculateFunctionValue(x)));
+                    }
+
+                    Graph.Series.Add(series);
+                    Graph.InvalidatePlot(true);
                 }
-
-                // SaveParameters Parameters to settings
-                SettingsService.SaveParameters(Parameters);
-
-                for (double x = Parameters.RangeStart; x <= Parameters.RangeEnd; x += 0.1)
+                else
                 {
-                    series.Points.Add(new DataPoint(x, _graphPlotterService.CalculateFunctionValue(x)));
+                    return;
                 }
 
-                Graph.Series.Add(series);
-                Graph.InvalidatePlot(true);
+
             }
             catch (Exception ex)
             {
                 _messageService.ShowMessage($"An error occurred while plotting the function: {ex.Message}", "Error");
             }
                 
+        }
+
+        private bool CheckValidRanges(double rangeStart, double rangeEnd)
+        {
+            if (Parameters.RangeStart > Parameters.RangeEnd)
+            {
+                _messageService.ShowMessage("Range start was greater than range end. Please swap the values!", "Warning");
+                 return false;
+            }
+            else if (Parameters.RangeStart == Parameters.RangeEnd)
+            {
+                _messageService.ShowMessage("Range start and end are equal. Please change the values!", "Warning");
+                return false;
+            }
+
+            return true;
         }
 
         private void ExportGraph()
