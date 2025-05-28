@@ -31,9 +31,14 @@ namespace SimpleGraphCalculatorApp.Models
         }
 
         public void Export(PlotModel model, string filePath)
-        {
+        {                  
             try
-            {                
+            {    
+                if (model == null || string.IsNullOrWhiteSpace(filePath) || string.IsNullOrEmpty(filePath))
+                {
+                    throw new NullReferenceException("Model or path cannot be null or empty.");
+                }
+
                 var directory = Path.GetDirectoryName(filePath);
                 if (directory == null || !Directory.Exists(directory))
                 {
@@ -44,11 +49,15 @@ namespace SimpleGraphCalculatorApp.Models
                 var exporter = new OxyPlot.SvgExporter { Width = 800, Height = 600 };
                 exporter.Export(model, stream);
             }
+            catch (NullReferenceException ex)
+            {
+                messageService.ShowMessage($"{ex.Message}", "Error");
+                throw; 
+            }   
             catch (Exception ex)
             {                
                 messageService.ShowMessage($"Error exporting SVG: {ex.Message}", "Error");                
-            }
-            
+            }            
         }
     }
 
@@ -65,6 +74,11 @@ namespace SimpleGraphCalculatorApp.Models
         {
             try
             {
+                if (model == null || string.IsNullOrWhiteSpace(filePath) || string.IsNullOrEmpty(filePath))
+                {
+                    throw new NullReferenceException("Model or path cannot be null or empty.");
+                }
+
                 var directory = Path.GetDirectoryName(filePath);
                 if (directory == null || !Directory.Exists(directory))
                 {
@@ -102,6 +116,11 @@ namespace SimpleGraphCalculatorApp.Models
                 sb.AppendLine("</Canvas>");
 
                 File.WriteAllText(filePath, sb.ToString());
+            }
+            catch (NullReferenceException ex)
+            {
+                messageService.ShowMessage($"{ex.Message}", "Error");
+                throw;
             }
             catch (Exception ex)
             {              

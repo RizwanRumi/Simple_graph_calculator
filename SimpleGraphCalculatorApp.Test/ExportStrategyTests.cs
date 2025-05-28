@@ -37,7 +37,7 @@ namespace SimpleGraphCalculatorApp.Test
             // Arrange
             var model = CreateSampleModel();
             var strategy = new SvgExportStrategy(mockMessageService.Object);
-            var path = "test_output.svg";
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Export", "test_output.svg");
 
             // Act
             strategy.Export(model, path);
@@ -52,7 +52,7 @@ namespace SimpleGraphCalculatorApp.Test
         {
             var model = CreateSampleModel();
             var strategy = new XamlExportStrategy(mockMessageService.Object);
-            var path = "test_output.xaml";
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Export", "test_output.xaml");
 
             strategy.Export(model, path);
 
@@ -61,11 +61,11 @@ namespace SimpleGraphCalculatorApp.Test
         }
 
         [Test]
-        public void SvgExportStrategy_ShouldThrowException_OnNullModel()
+        public void SvgExportStrategy_ShouldThrowException_OnNullPathorModel()
         {
             // Arrange
             var strategy = new SvgExportStrategy(mockMessageService.Object);
-            string path = "test.svg";
+            string path = null;
 
             // Act & Assert
             Assert.Throws<NullReferenceException>(() => strategy.Export(null, path));
